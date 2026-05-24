@@ -1,525 +1,1190 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <title>Painel Cinthia Monteiro - Estúdio de Beleza</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>Dashboard • GSX Sistemas</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-       .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; border: 1px solid #ccc; background-color: #ccc; }
-        .cal-dia { background-color: white; height: 60px; padding: 5px; text-align: right; cursor: pointer; transition: 0.2s; }
-        .hidden { display: none; }
-        .btn-hora { transition: 0.3s; cursor: pointer; }
-        .btn-hora.ocupado { background-color: #ef4444 !important; color: white !important; cursor: not-allowed; opacity: 0.6; }
-    </style>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#e11d48'
+                    },
+                    boxShadow: {
+                        soft: '0 10px 30px rgba(0,0,0,0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+    <script>
+        if (
+            localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
 </head>
-<body class="bg-gray-100 flex h-screen">
 
-<div id="login-screen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
-    <div class="bg-white p-8 rounded-lg shadow-xl w-96">
-        <h2 id="titulo-login" class="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
+<body class="bg-gray-100 dark:bg-slate-950 transition-colors duration-300 text-gray-800 dark:text-white">
 
-        <input id="email" type="email" placeholder="E-mail" class="w-full border p-2 mb-4 rounded">
-        <input id="senha" type="password" placeholder="Senha" class="w-full border p-2 mb-6 rounded">
-        
-        <button onclick="recuperarSenha()" class="text-sm text-blue-500 underline">Esqueci minha senha</button>
-        <button id="btn-acao" onclick="processarAcao()" class="w-full bg-rose-600 text-white py-2 rounded font-bold hover:bg-rose-700">Entrar</button>
-        
-        <div class="mt-4 text-center text-sm">
-            <button id="btn-alternar" onclick="alternarModo()" class="text-blue-600 hover:underline">Criar nova conta</button>
-            <br><br>
-            <button onclick="pedirAjuda()" class="text-gray-500 hover:underline">Precisa de ajuda?</button>
+<div id="login-screen" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl w-full max-w-md">
+        <h2 id="titulo-login" class="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">Login</h2>
+
+        <input id="email" type="email" placeholder="E-mail" class="w-full border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 mb-4 rounded text-gray-900 dark:text-white"/>
+        <input id="senha" type="password" placeholder="Senha" class="w-full border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 mb-6 rounded text-gray-900 dark:text-white"/>
+
+        <button onclick="recuperarSenha()" class="text-sm text-primary underline">Esqueci minha senha</button>
+
+        <button id="btn-acao" onclick="processarAcao()" class="w-full mt-6 bg-primary text-white py-3 rounded-xl font-bold hover:bg-rose-700 transition">
+            Entrar
+        </button>
+
+        <div class="mt-5 text-center text-sm text-gray-600 dark:text-gray-300">
+            <button id="btn-alternar" onclick="alternarModo()" class="text-primary hover:underline">Criar nova conta</button>
+            <div class="mt-4">
+                <button onclick="pedirAjuda()" class="text-gray-500 dark:text-gray-400 hover:underline">Precisa de ajuda?</button>
+            </div>
         </div>
     </div>
 </div>
 
-    <aside class="w-64 bg-slate-900 text-white p-6 flex flex-col shadow-xl">
-        <div class="flex items-center gap-3 mb-10">
-            <img id="nav-foto" src="https://ui-avatars.com/api/?name=User" class="w-12 h-12 rounded-full object-cover border-2 border-rose-500">
-            <div>
-                <p id="nav-nome" class="font-bold text-sm">Usuário</p>
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest">Administrador</p>
-            </div>
+<div class="flex h-screen overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 flex flex-col">
+
+        <div class="p-6 border-b border-gray-100 dark:border-slate-800">
+
+            <img src="file:///G:/sites/GSX menor.png" alt="GSX" class="h-10 object-contain">
+            <h1 class="text-xl font-extrabold text-primary mt-2">GSX</h1>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Painel administrativo
+            </p>
+
         </div>
-<nav class="space-y-4">
-            <button onclick="show('agenda')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">📅 Agenda</button>
-            <button onclick="show('clientes')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">👥 Clientes</button>
-            <button onclick="show('servicos')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">✨Serviços</button>
-            <button onclick="show('lista-agendamentos')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">📋Agendamentos Salvos</button>
-            <button onclick="show('fornecedores')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">💵Financeiro</button>
-            <button onclick="show('inventario')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">📦 Inventário</button>
-            <button onclick="show('fornecedores')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">🚚 Fornecedores</button>
-            <button onclick="resetarAgenda()" class="w-full text-left p-3 font-bold text-red-600 hover:bg-rose-100 rounded text-gray-700">⚠️ Resetar Calendário</button>
-            <button onclick="show('perfil')" class="w-full text-left p-3 font-bold text-red-600 hover:bg-rose-100 rounded text-gray-700">👤 Meu Perfil</button>
-            <button onclick="show('admin')" class="w-full text-left p-3 font-bold text-red-600 hover:bg-rose-100 rounded text-gray-700">⚙️ Aprovar Registros</button>
+
+        <!-- MENU -->
+        <nav class="flex-1 p-4 space-y-2">
+
+            <button data-section="dashboard" class="menu-btn active-menu">
+                <i class="fa-solid fa-chart-pie w-5"></i>
+                Dashboard
+            </button>
+
+            <button data-section="financeiro" class="menu-btn">
+                <i class="fa-solid fa-wallet w-5"></i>
+                Financeiro
+            </button>
+
+            <button data-section="agenda" class="menu-btn">
+                <i class="fa-solid fa-calendar-check w-5"></i>
+                Agenda
+            </button>
+
+            <button data-section="finalizados" class="menu-btn">
+                <i class="fa-solid fa-circle-check w-5"></i>
+                Finalizados
+            </button>
+
+            <button data-section="clientes" class="menu-btn">
+                <i class="fa-solid fa-users w-5"></i>
+                Clientes
+            </button>
+
+            <button data-section="servicos" class="menu-btn">
+                <i class="fa-solid fa-star w-5"></i>
+                Serviços
+            </button>
+
+            <button data-section="fornecedores" class="menu-btn">
+                <i class="fa-solid fa-truck w-5"></i>
+                Fornecedores
+            </button>
+
+            <button data-section="inventario" class="menu-btn">
+                <i class="fa-solid fa-box-open w-5"></i>
+                Inventário
+            </button>
+
+            <button data-section="perfil" class="menu-btn">
+                <i class="fa-solid fa-user-gear w-5"></i>
+                Configurações
+            </button>
+
         </nav>
-    <button onclick="sair()" class="block w-full text-left p-3 mt-auto bg-slate-800 hover:bg-red-900 rounded text-red-400 transition">
-            <i class="fas fa-sign-out-alt"></i> Sair da Conta
-        </button>
-    </aside>
-  
-<main class="flex-1 p-8 overflow-y-auto">
 
-<section id="perfil" class="max-w-xl mx-auto bg-white p-8 rounded shadow">
-    <h2 class="text-2xl font-bold mb-6">Configurações de Perfil</h2>
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="w-32 h-32 rounded-full bg-gray-200 mb-4 overflow-hidden border-4 border-rose-600">
-            <img id="fotoPreview" src="https://via.placeholder.com/150" class="w-full h-full object-cover">
-            <input type="file" onchange="uploadFoto(this)" class="text-sm text-gray-500">
+        <!-- TEMA -->
+        <div class="p-4 border-t border-gray-100 dark:border-slate-800">
+
+            <button id="themeButton" class="w-full flex items-center justify-center gap-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 py-3 rounded-xl transition">
+                <i class="fa-solid fa-moon"></i>
+                <span>Alternar Tema</span>
+            </button>
+
         </div>
-        <input type="file" id="fotoInput" onchange="previewImagem(this)" class="text-sm">
-    </div>
 
-    <div class="grid grid-cols-2 gap-4">
-        <input id="pNome" placeholder="Nome" class="border p-2 rounded">
-        <input id="pSobre" placeholder="Sobrenome" class="border p-2 rounded">
-        <input id="pTel" placeholder="Telefone" class="border p-2 rounded col-span-2">
-        <input id="pEmail" placeholder="E-mail" class="border p-2 rounded col-span-2">
-        <input id="pNome Da Empresa" placeholder="Nome Da Empresa" class="border p-2 rounded col-span-2">
-        <select id="pUso" class="border p-2 rounded col-span-2">
-            <option value="">Qual será seu uso?</option>
-            <option value="pessoal">Uso Pessoal</option>
-            <option value="profissional">Uso Profissional/Estúdio</option>
-        </select>
-    </div>
+    </aside>
 
-    <button onclick="salvarPerfil()" class="mt-6 w-full bg-rose-600 text-white py-3 rounded font-bold hover:bg-rose-700">
-        <i class="fas fa-save mr-2"></i> Salvar Perfil
-    </button>
-</section>
-    
-<section id="perfil" class="hidden">
-            <h2 class="text-2xl font-bold mb-4">Editar Perfil</h2>
-            <input id="editNome" placeholder="Nome de Usuário" class="border p-2 mb-2 w-full">
-            <input type="file" id="fotoPerfil" class="mb-2">
-            <button onclick="salvarPerfil()" class="bg-blue-600 text-white px-4 py-2">Salvar Alterações</button>
-        </section>
+    <!-- CONTEÚDO -->
+    <main class="flex-1 overflow-y-auto p-8">
 
-        <section id="admin" class="hidden">
-            <h2 class="text-2xl font-bold mb-4">Solicitações de Registro</h2>
-            <div id="listaPendentes" class="space-y-2"></div>
-        </section>
+        <!-- TOPO -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
 
-        <section id="agenda" class="max-w-4xl">
-            <h2 class="text-2xl font-bold mb-4">Novo Agendamento</h2>
-            <div class="cal-grid bg-white rounded shadow p-1">
-          
-                <script>
-                    for(let i = 1; i <= 31; i++) {
-                        document.write(`<div onclick="selecionarData(${i})" id="dia-${i}" class="cal-dia hover:bg-rose-200">${i}</div>`);
-                    }
-                </script>
-            </div>
-            <div class="mt-6 bg-white p-6 rounded shadow space-y-4">
-                <div>
-                    <label class="block font-bold text-gray-700 mb-1">Selecione a Cliente:</label>
-                    <select id="clienteSelect" class="border p-2 w-full rounded"></select>
-                </div>
-                <div>
-                    <label class="block font-bold text-gray-700 mb-1">Selecione o Serviço:</label>
-                    <select id="servicoSelect" class="border p-2 w-full rounded"></select>
-                </div>
-                <p id="status-agendamento" class="text-rose-600 font-bold">Selecione dia e hora...</p>
-                <div class="grid grid-cols-4 gap-2">
-                    <button onclick="selecionarHora('08:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">08:00</button>
-                    <button onclick="selecionarHora('09:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">09:00</button>
-                    <button onclick="selecionarHora('10:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">10:00</button>
-                    <button onclick="selecionarHora('11:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">11:00</button>
-                    <button onclick="selecionarHora('13:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">13:00</button>
-                    <button onclick="selecionarHora('14:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">14:00</button>
-                    <button onclick="selecionarHora('15:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">15:00</button>
-                    <button onclick="selecionarHora('16:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">16:00</button>
-                </div>
-                <button onclick="salvarAgendamento()" class="w-full bg-rose-600 text-white font-bold py-3 rounded shadow hover:bg-rose-700">Confirmar Agendamento</button>
-            </div>
-        </section>
+            <div>
+                <h2 class="text-3xl font-bold" id="greetingTitle">
+                    Bem-vinda, Cinthia 👋
+                </h2>
 
-        <section id="clientes" class="hidden max-w-2xl">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Clientes</h2>
-            <div class="bg-white p-4 rounded shadow mb-6">
-                <input id="nomeC" placeholder="Nome da Cliente" class="border p-2 w-full mb-2 rounded">
-                <input id="telC" placeholder="WhatsApp (ex: 5511999999999)" class="border p-2 w-full mb-2 rounded">
-                <button onclick="salvarCliente()" class="bg-green-600 text-white px-6 py-2 rounded font-bold">Salvar Cliente</button>
-            </div>
-            <div id="listaClientes" class="space-y-2"></div>
-        </section>
-
-        <section id="servicos" class="hidden max-w-2xl">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Serviços</h2>
-            <div class="bg-white p-4 rounded shadow mb-6">
-                <input id="nomeS" placeholder="Nome do Serviço (ex: Cílios Fio a Fio)" class="border p-2 w-full mb-2 rounded">
-                <input id="precoS" placeholder="Preço (ex: 150,00)" class="border p-2 w-full mb-2 rounded">
-                <button onclick="salvarServico()" class="bg-purple-600 text-white px-6 py-2 rounded font-bold">Salvar Serviço</button>
-            </div>
-            <div id="listaServicos" class="space-y-2"></div>
-        </section>
-
-        <section id="estoque" class="hidden max-w-2xl">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Estoque de Materiais</h2>
-            <div class="bg-white p-4 rounded shadow mb-6">
-                <input id="itemE" placeholder="Produto" class="border p-2 w-full mb-2 rounded">
-                <input id="qtdE" type="number" placeholder="Quantidade" class="border p-2 w-full mb-2 rounded">
-                <button onclick="salvarEstoque()" class="bg-blue-600 text-white px-6 py-2 rounded font-bold">Adicionar Material</button>
-            </div>
-            <div id="listaEstoque" class="space-y-2"></div>
-        </section>
-
-        <section id="lista-agendamentos" class="hidden max-w-3xl">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Agendamentos Salvos</h2>
-            <div id="listaAgendamentos" class="space-y-3"></div>
-        </section>
-
-        <section id="inventario" class="hidden max-w-2xl">
-            <h2 class="text-2xl font-bold mb-4">Inventário</h2>
-            <div class="bg-white p-4 rounded shadow mb-6 flex gap-2">
-                <input id="prodNome" placeholder="Produto" class="border p-2 flex-1 rounded">
-                <input id="prodQtd" type="number" placeholder="Qtd" class="border w-20 p-2 rounded">
-                <button onclick="salvarProduto()" class="bg-blue-600 text-white px-4 py-2 rounded font-bold">Salvar</button>
+                <p class="text-gray-500 dark:text-gray-400 mt-1">
+                    Aqui está um resumo do seu negócio hoje.
+                </p>
             </div>
-            <div id="listaInventario" class="space-y-2"></div>
+
+            <div class="flex items-center gap-4">
+                <!-- Foto de Perfil -->
+                <div class="relative group">
+                    <img id="userProfilePic" src="https://via.placeholder.com/40?text=Usuário" alt="Perfil" class="w-10 h-10 rounded-full border-2 border-primary object-cover cursor-pointer">
+                </div>
+                <button onclick="fazerLogout()" class="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition font-medium">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                    Sair
+                </button>
+            </div>
+
+        </div>
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section-page">
+
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold">Dashboard</h2>
+                <div class="flex items-center gap-4">
+                    <label class="text-sm font-semibold">Filtrar por mês:</label>
+                    <input 
+                        id="mesFilter" 
+                        type="month" 
+                        class="input-style w-48"
+                        onchange="atualizarFinanceiro()"
+                    />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+                <div class="card border-green-500">
+
+                    <div>
+                        <p class="card-label">Total Serviços</p>
+                        <h3 id="totalServicosDashboard" class="card-value text-green-600">R$ 0,00</h3>
+                    </div>
+
+                    <div class="icon-box bg-green-100 text-green-600">
+                        <i class="fa-solid fa-money-bill-trend-up"></i>
+                    </div>
+
+                </div>
+
+                <div class="card border-red-500">
+
+                    <div>
+                        <p class="card-label">Despesas</p>
+                        <h3 id="totalDespesasDashboard" class="card-value text-red-500">R$ 0,00</h3>
+                    </div>
+
+                    <div class="icon-box bg-red-100 text-red-500">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+
+                </div>
+
+                <div class="card border-blue-500">
+
+                    <div>
+                        <p class="card-label">Agendamentos</p>
+                        <h3 id="totalAgendamentosDashboard" class="card-value text-blue-600">0</h3>
+                    </div>
+
+                    <div class="icon-box bg-blue-100 text-blue-600">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+
+                </div>
+
+                <div class="card border-yellow-500">
+
+                    <div>
+                        <p class="card-label">Finalizados</p>
+                        <h3 id="finalizadosDashboard" class="card-value text-yellow-500">0</h3>
+                    </div>
+
+                    <div class="icon-box bg-yellow-100 text-yellow-500">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+
+                </div>
+
+                <div class="card border-fuchsia-500">
+
+                    <div>
+                        <p class="card-label">Salão</p>
+                        <h3 id="salaoDashboard" class="card-value text-fuchsia-600">R$ 0,00</h3>
+                    </div>
+
+                    <div class="icon-box bg-fuchsia-100 text-fuchsia-600">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+
+                </div>
+
+                <div class="card border-sky-500">
+
+                    <div>
+                        <p class="card-label">Material</p>
+                        <h3 id="materialDashboard" class="card-value text-sky-600">R$ 0,00</h3>
+                    </div>
+
+                    <div class="icon-box bg-sky-100 text-sky-600">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </div>
+
+                </div>
+
+                <div class="card border-emerald-500">
+
+                    <div>
+                        <p class="card-label">Lucro</p>
+                        <h3 id="lucroDashboard" class="card-value text-emerald-600">R$ 0,00</h3>
+                    </div>
+
+                    <div class="icon-box bg-emerald-100 text-emerald-600">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
         </section>
 
-        <section id="fornecedores" class="hidden max-w-2xl">
+        <!-- FINANCEIRO -->
+        <section id="financeiro" class="section-page hidden">
+
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Financeiro</h2>
+                <div class="flex items-center gap-4">
+                    <label class="text-sm font-semibold">Filtrar por mês:</label>
+                    <input 
+                        id="mesFilterFinanceiro" 
+                        type="month" 
+                        class="input-style w-48"
+                        onchange="atualizarFinanceiro()"
+                    />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+
+                <div class="card border-green-500">
+                    <div>
+                        <p class="card-label">Serviços</p>
+                        <h3 id="totalServicos" class="card-value text-green-600">R$ 0,00</h3>
+                    </div>
+                    <div class="icon-box bg-green-100 text-green-600">
+                        <i class="fa-solid fa-scissors"></i>
+                    </div>
+                </div>
+
+                <div class="card border-red-500">
+                    <div>
+                        <p class="card-label">Despesas</p>
+                        <h3 id="totalDespesas" class="card-value text-red-500">R$ 0,00</h3>
+                    </div>
+                    <div class="icon-box bg-red-100 text-red-500">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+                </div>
+
+                <div class="card border-blue-500">
+                    <div>
+                        <p class="card-label">Agendamentos</p>
+                        <h3 id="totalAgendamentos" class="card-value text-blue-600">0</h3>
+                    </div>
+                    <div class="icon-box bg-blue-100 text-blue-600">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                </div>
+
+                <div class="card border-yellow-500">
+                    <div>
+                        <p class="card-label">Finalizados</p>
+                        <h3 id="agendamentosFinalizados" class="card-value text-yellow-500">0</h3>
+                    </div>
+                    <div class="icon-box bg-yellow-100 text-yellow-500">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-soft">
+                    <h3 class="text-xl font-bold mb-4">Nova Despesa</h3>
+                    <div class="space-y-4">
+                        <input id="nomeDespesa" type="text" placeholder="Descrição da despesa" class="input-style"/>
+                        <input id="valorDespesa" type="number" placeholder="Valor" class="input-style"/>
+                        <button onclick="adicionarDespesa()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl transition w-full">Salvar Despesa</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-soft overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                    <tr class="border-b border-gray-200 dark:border-slate-700">
+                        <th class="text-left py-3">Descrição</th>
+                        <th class="text-left py-3">Data</th>
+                        <th class="text-left py-3">Valor</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabelaFinanceiro"></tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <!-- AGENDA -->
+        <section id="agenda" class="section-page hidden">
+            <h2 class="text-2xl font-bold mb-4">Agenda</h2>
+
+            <div class="cal-grid bg-white rounded-3xl shadow p-1 mb-6" id="calendarGrid"></div>
+
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-soft space-y-4">
+                <div>
+                    <label class="block font-bold text-gray-700 dark:text-gray-200 mb-1">Selecione a Cliente:</label>
+                    <select id="clienteSelect" class="border border-gray-200 dark:border-slate-700 p-2 w-full rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-white"></select>
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 dark:text-gray-200 mb-1">Selecione o Serviço:</label>
+                    <select id="servicoSelect" class="border border-gray-200 dark:border-slate-700 p-2 w-full rounded bg-white dark:bg-slate-800 text-gray-900 dark:text-white"></select>
+                </div>
+                <p id="status-agendamento" class="text-rose-600 font-bold">Selecione dia e hora...</p>
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="selecionarHora('08:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">08:00</button>
+                    <button onclick="selecionarHora('09:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">09:00</button>
+                    <button onclick="selecionarHora('10:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">10:00</button>
+                    <button onclick="selecionarHora('11:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">11:00</button>
+                    <button onclick="selecionarHora('13:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">13:00</button>
+                    <button onclick="selecionarHora('14:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">14:00</button>
+                    <button onclick="selecionarHora('15:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">15:00</button>
+                    <button onclick="selecionarHora('16:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">16:00</button>
+                </div>
+                <button onclick="salvarAgendamento()" class="w-full bg-primary text-white font-bold py-3 rounded-xl shadow hover:bg-rose-700">Confirmar Agendamento</button>
+            </div>
+
+            <div class="mt-6">
+                <h3 class="text-xl font-bold mb-4">Agendamentos Salvos</h3>
+                <div id="listaAgendamentos" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- AGENDAMENTOS FINALIZADOS -->
+        <section id="finalizados" class="section-page hidden">
+            <h2 class="text-2xl font-bold mb-4">Agendamentos Finalizados</h2>
+            <div id="listaFinalizados" class="space-y-3"></div>
+        </section>
+
+        <!-- CLIENTES -->
+        <section id="clientes" class="section-page hidden">
+            <h2 class="text-2xl font-bold mb-4">Clientes</h2>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-soft mb-6">
+                <input id="nomeC" placeholder="Nome da Cliente" class="border border-gray-200 dark:border-slate-700 p-3 w-full mb-3 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white"/>
+                <input id="telC" placeholder="WhatsApp (ex: 5511999999999)" class="border border-gray-200 dark:border-slate-700 p-3 w-full mb-3 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white"/>
+                <button onclick="salvarCliente()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-bold">Salvar Cliente</button>
+            </div>
+            <div id="listaClientes" class="space-y-2"></div>
+        </section>
+
+        <!-- SERVIÇOS -->
+        <section id="servicos" class="section-page hidden">
+            <h2 class="text-2xl font-bold mb-4">Serviços</h2>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-soft mb-6">
+                <input id="nomeS" placeholder="Nome do Serviço (ex: Cílios Fio a Fio)" class="border border-gray-200 dark:border-slate-700 p-3 w-full mb-3 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white"/>
+                <input id="precoS" placeholder="Preço (ex: 150,00)" class="border border-gray-200 dark:border-slate-700 p-3 w-full mb-3 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white"/>
+                <button onclick="salvarServico()" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold">Salvar Serviço</button>
+            </div>
+            <div id="listaServicos" class="space-y-2"></div>
+        </section>
+
+        <!-- FORNECEDORES -->
+        <section id="fornecedores" class="section-page hidden">
             <h2 class="text-2xl font-bold mb-4">Fornecedores</h2>
-            <div class="bg-white p-4 rounded shadow mb-6">
-                <input id="fNome" placeholder="Nome Empresa" class="border p-2 w-full mb-2 rounded">
-                <input id="fTel" placeholder="Contato" class="border p-2 w-full mb-2 rounded">
-                <button onclick="salvarFornecedor()" class="bg-slate-700 text-white px-6 py-2 rounded font-bold">Salvar</button>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-soft mb-6">
+                <input id="fNome" placeholder="Nome Empresa" class="border border-gray-200 dark:border-slate-700 p-3 w-full mb-3 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white"/>
+                <input id="fTel" placeholder="Contato" class="border border-gray-200 dark:border-slate-700 p-3 w-full mb-3 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white"/>
+                <button onclick="salvarFornecedor()" class="bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-bold">Salvar Fornecedor</button>
             </div>
             <div id="listaFornecedores" class="space-y-2"></div>
         </section>
 
-        <section id="admin" class="hidden">
-            <h2 class="text-2xl font-bold mb-4">Solicitações de Registro</h2>
-            <div id="listaPendentes" class="space-y-2"></div>
+        <!-- INVENTÁRIO -->
+        <section id="inventario" class="section-page hidden">
+            <h2 class="text-2xl font-bold mb-4">Inventário</h2>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-soft mb-6 flex flex-col gap-4 md:flex-row">
+                <input id="prodNome" placeholder="Produto" class="border border-gray-200 dark:border-slate-700 p-3 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white flex-1"/>
+                <input id="prodQtd" type="number" placeholder="Qtd" class="border border-gray-200 dark:border-slate-700 p-3 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white w-32"/>
+                <button onclick="salvarProduto()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold">Salvar</button>
+            </div>
+            <div id="listaInventario" class="space-y-2"></div>
         </section>
 
-        <section id="clientes" class="hidden"></section>
-        <section id="servicos" class="hidden"></section>
-        <section id="lista-agendamentos" class="hidden"></section>
-    </main>
+        <!-- PERFIL -->
+        <section id="perfil" class="section-page hidden">
+            <h2 class="text-2xl font-bold mb-6">Configurações</h2>
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-soft max-w-2xl">
+                <div class="grid grid-cols-1 gap-5">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">Nome</label>
+                        <input id="perfilNome" type="text" class="input-style" placeholder="Seu nome"/>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">Telefone</label>
+                        <input id="perfilTelefone" type="text" class="input-style" placeholder="(00) 00000-0000"/>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">E-mail</label>
+                        <input id="perfilEmail" type="email" class="input-style" placeholder="seu@email.com"/>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">Uso</label>
+                        <select id="perfilUso" class="input-style">
+                            <option value="">Qual será seu uso?</option>
+                            <option value="pessoal">Uso Pessoal</option>
+                            <option value="profissional">Uso Profissional/Estúdio</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">Nome da Empresa</label>
+                        <input id="perfilEmpresa" type="text" class="input-style" placeholder="Nome da empresa"/>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img id="prev-foto" src="https://ui-avatars.com/api/?name=Cinthia" class="w-32 h-32 rounded-full border-4 border-rose-100 mb-4 object-cover" alt="Foto do perfil"/>
+                        <input type="file" onchange="uploadFoto(this)" class="text-sm text-gray-500 dark:text-gray-300"/>
+                    </div>
+                    <button onclick="salvarPerfil()" class="bg-primary hover:bg-rose-700 text-white px-6 py-3 rounded-xl transition">Salvar Perfil</button>
+                </div>
+            </div>
+        </section>
 
+    </main>
+
+</div>
+
+<style>
+    * { transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; }
+    
+    .cal-grid { 
+        display: grid; 
+        grid-template-columns: repeat(7, 1fr); 
+        gap: 8px; 
+        border: none;
+        background-color: transparent;
+        padding: 16px;
+    }
+    
+    .cal-dia { 
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        height: 80px; 
+        padding: 8px;
+        text-align: right; 
+        cursor: pointer; 
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex; 
+        align-items: flex-start; 
+        justify-content: flex-end;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        font-weight: 600;
+        position: relative;
+    }
+    
+    .cal-dia:hover { 
+        background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(236, 72, 153, 0.15);
+        border-color: #ec4899;
+    }
+    
+    .btn-hora { 
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        cursor: pointer;
+        font-weight: 600;
+        border: 2px solid #e2e8f0;
+    }
+    
+    .btn-hora:hover:not(.ocupado) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(236, 72, 153, 0.1);
+        border-color: #ec4899;
+    }
+    
+    .btn-hora.ocupado { 
+        background: linear-gradient(135deg, #ef4494 0%, #ec0c38 100%) !important;
+        color: white !important;
+        cursor: not-allowed; 
+        opacity: 0.7;
+        border-color: #ec0c38 !important;
+    }
+    
+    .shadow-soft { 
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    .menu-btn {
+        @apply w-full flex items-center gap-3 p-3 rounded-xl transition text-left hover:bg-rose-50 dark:hover:bg-slate-800 font-medium;
+    }
+
+    .active-menu {
+        @apply bg-gradient-to-r from-rose-600 to-rose-700 text-white hover:from-rose-700 hover:to-rose-800 shadow-lg;
+    }
+
+    .card {
+        @apply bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-soft border-l-4 flex items-center justify-between transform transition-transform hover:scale-105;
+    }
+
+    .card-label {
+        @apply text-sm text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide;
+    }
+
+    .card-value {
+        @apply text-3xl font-extrabold mt-1;
+    }
+
+    .icon-box {
+        @apply w-14 h-14 rounded-2xl flex items-center justify-center text-xl shadow-md transform transition-transform hover:scale-110;
+    }
+
+    .input-style {
+        @apply w-full bg-gray-100 dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent text-gray-900 dark:text-white font-medium transition-all;
+    }
+
+    .product-card {
+        @apply bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-soft transform transition-all hover:shadow-xl;
+    }
+    
+    .agendamento-card {
+        @apply bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-soft border-l-4 transition-all hover:shadow-lg;
+    }
+    
+    .agendamento-pendente {
+        @apply border-l-orange-500;
+    }
+    
+    .agendamento-finalizado {
+        @apply border-l-green-500;
+    }
+    
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-slideIn {
+        animation: slideIn 0.4s ease-out;
+    }
+</style>
 
 <script>
-      
-     // Preview da imagem e conversão para Base64
-    function previewImagem(input) {
-        if (input.files && input.files[0]) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('fotoPreview').src = e.target.result;
+    const Storage = {
+        get: (key) => {
+            const value = localStorage.getItem(key);
+            return value ? JSON.parse(value) : null;
+        },
+        set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
+        remove: (key) => localStorage.removeItem(key)
+    };
+
+    let dataEscolhida = null;
+    let horaEscolhida = null;
+    let modoRegistro = false;
+    let totalServicos = 0;
+    let totalDespesas = 0;
+    let totalAgendamentos = 0;
+    let totalFinalizados = 0;
+
+    function init() {
+        renderCalendar();
+        bindMenuButtons();
+        bindThemeButton();
+        loadTheme();
+        loadData();
+        loadUserProfile();
+        showSection('dashboard');
+
+        const loginScreen = document.getElementById('login-screen');
+        if (localStorage.getItem('logado') === 'true') {
+            loginScreen.style.display = 'none';
+        } else {
+            loginScreen.style.display = 'flex';
+        }
+    }
+
+    function fazerLogout() {
+        localStorage.setItem('logado', 'false');
+        localStorage.removeItem('user_data');
+        location.reload();
+    }
+
+    function loadUserProfile() {
+        const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+        if (userData.profilePic) {
+            const profilePic = document.getElementById('userProfilePic');
+            if (profilePic) profilePic.src = userData.profilePic;
+        }
+    }
+
+    function bindMenuButtons() {
+        const buttons = document.querySelectorAll('.menu-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const target = button.dataset.section;
+                showSection(target);
+                buttons.forEach(btn => btn.classList.remove('active-menu'));
+                button.classList.add('active-menu');
+            });
+        });
+    }
+
+    function showSection(id) {
+        document.querySelectorAll('.section-page').forEach(section => section.classList.add('hidden'));
+        const target = document.getElementById(id);
+        if (target) target.classList.remove('hidden');
+    }
+
+    function bindThemeButton() {
+        document.getElementById('themeButton').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    }
+
+    function loadTheme() {
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+
+    function renderCalendar() {
+        const calendarGrid = document.getElementById('calendarGrid');
+        if (!calendarGrid) return;
+        calendarGrid.innerHTML = '';
+        for (let i = 1; i <= 31; i++) {
+            const dayCard = document.createElement('div');
+            dayCard.id = `dia-${i}`;
+            dayCard.className = 'cal-dia hover:bg-rose-200';
+            dayCard.textContent = i;
+            dayCard.addEventListener('click', () => selecionarData(i));
+            calendarGrid.appendChild(dayCard);
+        }
+    }
+
+    function loadData() {
+        atualizarTudo();
+        atualizarFinanceiro();
+        loadPerfil();
+    }
+
+    function loadPerfil() {
+        const perfil = Storage.get('perfilCM');
+        if (!perfil) return;
+        document.getElementById('perfilNome').value = perfil.nome || '';
+        document.getElementById('perfilTelefone').value = perfil.telefone || '';
+        document.getElementById('perfilEmail').value = perfil.email || '';
+        document.getElementById('perfilUso').value = perfil.uso || '';
+        document.getElementById('perfilEmpresa').value = perfil.empresa || '';
+        if (perfil.foto) {
+            document.getElementById('prev-foto').src = perfil.foto;
+        }
+        if (perfil.nome) {
+            document.getElementById('greetingTitle').innerText = `Bem-vinda, ${perfil.nome} 👋`;
+        }
+    }
+
+    function alternarModo() {
+        modoRegistro = !modoRegistro;
+        document.getElementById('titulo-login').innerText = modoRegistro ? 'Registrar' : 'Login';
+        document.getElementById('btn-acao').innerText = modoRegistro ? 'Cadastrar' : 'Entrar';
+        document.getElementById('btn-alternar').innerText = modoRegistro ? 'Já tenho conta' : 'Criar nova conta';
+    }
+
+    function processarAcao() {
+        const email = document.getElementById('email').value.trim();
+        const senha = document.getElementById('senha').value.trim();
+        if (!email || !senha) {
+            alert('Preencha o e-mail e a senha.');
+            return;
+        }
+
+        if (modoRegistro) {
+            Storage.set('user_data', { email, senha });
+            alert('Conta registrada com sucesso!');
+            alternarModo();
+        } else {
+            const userData = Storage.get('user_data');
+            if (userData && userData.email === email && userData.senha === senha) {
+                localStorage.setItem('logado', 'true');
+                document.getElementById('login-screen').style.display = 'none';
+            } else {
+                alert('E-mail ou senha incorretos ou não cadastrados!');
             }
+        }
+    }
+
+    function recuperarSenha() {
+        alert('Um link de redefinição foi enviado para o seu e-mail (Simulação).');
+    }
+
+    function pedirAjuda() {
+        alert('Entre em contato: suporte@estudiobeleza.com ou via WhatsApp.');
+    }
+
+    function selecionarData(dia) {
+        dataEscolhida = dia;
+        horaEscolhida = null;
+        document.querySelectorAll('.cal-dia').forEach(d => d.classList.remove('bg-rose-600', 'text-white'));
+        const selected = document.getElementById(`dia-${dia}`);
+        if (selected) selected.classList.add('bg-rose-600', 'text-white');
+        document.getElementById('status-agendamento').innerText = `Data: ${dia}/05`;
+        atualizarBloqueios();
+    }
+
+    function selecionarHora(hora, btn) {
+        if (btn.disabled) return;
+        horaEscolhida = hora;
+        document.querySelectorAll('.btn-hora').forEach(b => b.classList.remove('bg-black', 'text-white'));
+        btn.classList.add('bg-black', 'text-white');
+    }
+
+    function salvarCliente() {
+        const nome = document.getElementById('nomeC').value.trim();
+        const tel = document.getElementById('telC').value.trim();
+        if (!nome || !tel) {
+            alert('Preencha nome e telefone.');
+            return;
+        }
+        const list = Storage.get('clientes') || [];
+        list.push({ nome, tel });
+        Storage.set('clientes', list);
+        document.getElementById('nomeC').value = '';
+        document.getElementById('telC').value = '';
+        atualizarTudo();
+    }
+
+    function salvarServico() {
+        const nome = document.getElementById('nomeS').value.trim();
+        const preco = document.getElementById('precoS').value.trim();
+        if (!nome || !preco) {
+            alert('Preencha nome e preço.');
+            return;
+        }
+        const list = Storage.get('servicos') || [];
+        list.push({ nome, preco });
+        Storage.set('servicos', list);
+        document.getElementById('nomeS').value = '';
+        document.getElementById('precoS').value = '';
+        atualizarTudo();
+    }
+
+    function salvarFornecedor() {
+        const nome = document.getElementById('fNome').value.trim();
+        const tel = document.getElementById('fTel').value.trim();
+        if (!nome || !tel) {
+            alert('Preencha nome e contato.');
+            return;
+        }
+        const list = Storage.get('fornecedores') || [];
+        list.push({ nome, tel });
+        Storage.set('fornecedores', list);
+        document.getElementById('fNome').value = '';
+        document.getElementById('fTel').value = '';
+        atualizarTudo();
+    }
+
+    function salvarProduto() {
+        const nome = document.getElementById('prodNome').value.trim();
+        const qtd = parseInt(document.getElementById('prodQtd').value, 10);
+        if (!nome || isNaN(qtd)) {
+            alert('Preencha nome e quantidade.');
+            return;
+        }
+        const list = Storage.get('inventario') || [];
+        list.push({ nome, qtd });
+        Storage.set('inventario', list);
+        document.getElementById('prodNome').value = '';
+        document.getElementById('prodQtd').value = '';
+        atualizarTudo();
+    }
+
+    function salvarAgendamento() {
+        const ags = Storage.get('agenda') || [];
+        const cl = document.getElementById('clienteSelect').value;
+        const serv = document.getElementById('servicoSelect').value;
+        const cliList = Storage.get('clientes') || [];
+        const dadosCli = cliList.find(c => c.nome === cl);
+
+        if (!dataEscolhida || !horaEscolhida) {
+            return alert('Escolha data e hora!');
+        }
+        if (!cl || !serv) {
+            return alert('Escolha cliente e serviço.');
+        }
+        if (ags.find(a => a.data === dataEscolhida && a.hora === horaEscolhida)) {
+            return alert('Horário ocupado!');
+        }
+
+        ags.push({ cliente: cl, servico: serv, telefone: dadosCli ? dadosCli.tel : '', data: dataEscolhida, hora: horaEscolhida, status: 'Salvo' });
+        Storage.set('agenda', ags);
+        alert('Agendamento salvo com sucesso!');
+        atualizarTudo();
+        atualizarBloqueios();
+    }
+
+    function finalizarAgendamento(index) {
+        const ags = Storage.get('agenda') || [];
+        const agendamento = ags[index];
+        if (!agendamento || agendamento.status === 'Finalizado') return;
+
+        agendamento.status = 'Finalizado';
+        const servicos = Storage.get('servicos') || [];
+        const servico = servicos.find(s => s.nome === agendamento.servico);
+        const valor = servico ? parseFloat(servico.preco.toString().replace(',', '.')) || 0 : 0;
+        const financeiro = Storage.get('financeiro') || [];
+
+        financeiro.unshift({
+            type: 'servico',
+            descricao: `${agendamento.cliente} - ${agendamento.servico}`,
+            valor,
+            status: 'Finalizado',
+            data: new Date().toLocaleDateString()
+        });
+
+        Storage.set('financeiro', financeiro);
+        Storage.set('agenda', ags);
+        alert('Agendamento finalizado e adicionado ao financeiro!');
+        atualizarTudo();
+        atualizarBloqueios();
+    }
+
+    function uploadFoto(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('prev-foto').src = e.target.result;
+            };
             reader.readAsDataURL(input.files[0]);
         }
     }
 
     function salvarPerfil() {
-        const dados = {
-            nome: document.getElementById('pNome').value,
-            sobre: document.getElementById('pSobre').value,
-            tel: document.getElementById('pTel').value,
-            email: document.getElementById('pEmail').value,
-            uso: document.getElementById('pUso').value,
-            foto: document.getElementById('fotoPreview').src
-        };
-        
-        localStorage.setItem('perfil_usuario', JSON.stringify(dados));
-        alert("Perfil salvo com sucesso!");
+        const nome = document.getElementById('perfilNome').value.trim();
+        const telefone = document.getElementById('perfilTelefone').value.trim();
+        const email = document.getElementById('perfilEmail').value.trim();
+        const uso = document.getElementById('perfilUso').value;
+        const empresa = document.getElementById('perfilEmpresa').value.trim();
+        const foto = document.getElementById('prev-foto').src;
+
+        if (!nome || !telefone) {
+            alert('Preencha nome e telefone.');
+            return;
+        }
+
+        Storage.set('perfilCM', { nome, telefone, email, uso, empresa, foto });
+        document.getElementById('greetingTitle').innerText = `Bem-vinda, ${nome} 👋`;
+        alert('Perfil salvo com sucesso!');
     }
 
-    // Carregar dados ao abrir a página
-    window.onload = function() {
-        const dados = JSON.parse(localStorage.getItem('perfil_usuario'));
-        if (dados) {
-            document.getElementById('pNome').value = dados.nome || '';
-            document.getElementById('pSobre').value = dados.sobre || '';
-            document.getElementById('pTel').value = dados.tel || '';
-            document.getElementById('pEmail').value = dados.email || '';
-            document.getElementById('pUso').value = dados.uso || '';
-            document.getElementById('fotoPreview').src = dados.foto;
-        }
-    } 
-      
-      // --- FUNÇÕES DE LOGIC ---
+    function removerItem(storageKey, index) {
+        if (!confirm('Tem certeza que deseja remover este item?')) return;
+        const list = Storage.get(storageKey) || [];
+        list.splice(index, 1);
+        Storage.set(storageKey, list);
+        atualizarTudo();
+    }
 
-        function recuperarSenha() {
-            alert("Um link de redefinição foi enviado para o seu e-mail (Simulação).");
-        }
+    function atualizarBloqueios() {
+        const ags = Storage.get('agenda') || [];
+        document.querySelectorAll('.btn-hora').forEach(btn => {
+            btn.classList.remove('ocupado', 'bg-black', 'text-white');
+            btn.disabled = false;
+            if (dataEscolhida && ags.find(a => a.data === dataEscolhida && a.hora === btn.innerText)) {
+                btn.classList.add('ocupado');
+                btn.disabled = true;
+            }
+        });
+    }
 
-        function salvarPerfil() {
-            const nome = document.getElementById('editNome').value;
-            localStorage.setItem('user_nome', nome);
-            alert("Perfil atualizado!");
-        }
+    function atualizarTudo() {
+        const cList = Storage.get('clientes') || [];
+        document.getElementById('listaClientes').innerHTML = cList.map((c, i) => `
+            <div class="bg-white dark:bg-slate-900 p-3 border border-gray-200 dark:border-slate-700 rounded-3xl flex justify-between items-center shadow-sm">
+                <span><strong>${c.nome}</strong> (${c.tel})</span>
+                <button onclick="removerItem('clientes', ${i})" class="text-red-500 hover:text-red-700 font-bold">Excluir</button>
+            </div>
+        `).join('');
+        document.getElementById('clienteSelect').innerHTML = `<option value="">Selecione...</option>` + cList.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
 
-        function aprovarUsuario(index) {
-            let pendentes = JSON.parse(localStorage.getItem('pendentes') || '[]');
-            let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-            
-            // Move de pendentes para usuários aprovados
-            usuarios.push(pendentes[index]);
-            pendentes.splice(index, 1);
-            
-            localStorage.setItem('usuarios', JSON.stringify(usuarios));
-            localStorage.setItem('pendentes', JSON.stringify(pendentes));
-            renderAdmin();
-        }
+        const sList = Storage.get('servicos') || [];
+        document.getElementById('listaServicos').innerHTML = sList.map((s, i) => `
+            <div class="bg-white dark:bg-slate-900 p-3 border border-gray-200 dark:border-slate-700 rounded-3xl flex justify-between items-center shadow-sm">
+                <span><strong>${s.nome}</strong> - R$ ${s.preco}</span>
+                <button onclick="removerItem('servicos', ${i})" class="text-red-500 hover:text-red-700 font-bold">Excluir</button>
+            </div>
+        `).join('');
+        document.getElementById('servicoSelect').innerHTML = `<option value="">Selecione...</option>` + sList.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
 
-        function renderAdmin() {
-            let pendentes = JSON.parse(localStorage.getItem('pendentes') || '[]');
-            document.getElementById('listaPendentes').innerHTML = pendentes.map((u, i) => `
-                <div class="bg-white p-4 flex justify-between">
-                    <span>${u.email}</span>
-                    <button onclick="aprovarUsuario(${i})" class="bg-green-500 text-white px-2">Aprovar</button>
+        const forn = Storage.get('fornecedores') || [];
+        document.getElementById('listaFornecedores').innerHTML = forn.map((f, i) => `
+            <div class="bg-white dark:bg-slate-900 p-3 border border-gray-200 dark:border-slate-700 rounded-3xl flex justify-between items-center shadow-sm">
+                <span>${f.nome} - ${f.tel}</span>
+                <button onclick="removerItem('fornecedores', ${i})" class="text-red-500 hover:text-red-700 font-bold">Excluir</button>
+            </div>
+        `).join('');
+
+        const inv = Storage.get('inventario') || [];
+        document.getElementById('listaInventario').innerHTML = inv.map((p, i) => `
+            <div class="bg-white dark:bg-slate-900 p-3 border border-gray-200 dark:border-slate-700 rounded-3xl flex justify-between items-center shadow-sm">
+                <span>${p.nome}: <strong>${p.qtd}</strong></span>
+                <div class="flex gap-2">
+                    <button onclick="movimentar(${i}, 1)" class="bg-green-100 text-green-700 px-3 py-1 rounded-xl">+</button>
+                    <button onclick="movimentar(${i}, -1)" class="bg-red-100 text-red-700 px-3 py-1 rounded-xl">-</button>
+                    <button onclick="removerItem('inventario', ${i})" class="text-red-500 hover:text-red-700 font-bold">Excluir</button>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
 
-        function show(id) {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
+        const ags = Storage.get('agenda') || [];
+        document.getElementById('listaAgendamentos').innerHTML = ags.map((a, i) => {
+            const isFinalizado = a.status === 'Finalizado';
+            return `
+            <div class="bg-white dark:bg-slate-900 p-4 border border-gray-200 dark:border-slate-700 rounded-3xl shadow-sm flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
+                <div>
+                    <strong class="text-lg text-gray-800 dark:text-white">${a.cliente}</strong><br>
+                    <span class="text-rose-600 font-bold">${a.servico}</span><br>
+                    <span class="text-gray-600 dark:text-gray-400">Dia ${a.data}/05 às ${a.hora}</span>
+                </div>
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-2">
+                    <a href="https://wa.me/${a.telefone}" target="_blank" class="text-green-600 dark:text-green-400 text-2xl hover:text-green-700">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    ${isFinalizado ? `<span class="px-3 py-1 rounded-full bg-green-100 text-green-700">Finalizado</span>` : `<button onclick="finalizarAgendamento(${i})" class="bg-primary text-white px-4 py-2 rounded-xl hover:bg-rose-700 transition">Finalizar</button>`}
+                    <button onclick="removerItem('agenda', ${i})" class="bg-gray-100 dark:bg-slate-800 text-red-500 p-2 rounded-xl hover:bg-red-50">Excluir</button>
+                </div>
+            </div>`;
+        }).join('');
 
+        document.getElementById('listaFinalizados').innerHTML = ags.filter(a => a.status === 'Finalizado').map(a => `
+            <div class="bg-white dark:bg-slate-900 p-4 border border-gray-200 dark:border-slate-700 rounded-3xl shadow-sm flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
+                <div>
+                    <strong class="text-lg text-gray-800 dark:text-white">${a.cliente}</strong><br>
+                    <span class="text-rose-600 font-bold">${a.servico}</span><br>
+                    <span class="text-gray-600 dark:text-gray-400">Dia ${a.data}/05 às ${a.hora}</span>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-green-100 text-green-700">Finalizado</span>
+            </div>
+        `).join('');
 
-    </script>
-
-
-    <script>
-        let dataEscolhida = null, horaEscolhida = null;
-
-
-    let modoRegistro = false;
-
-    function sair() {
-        if (confirm("Você deseja encerrar sua sessão?")) {
-            localStorage.removeItem('logado');
-            location.reload();
-        }
-    }
-   
-    function alternarModo() {
-        modoRegistro = !modoRegistro;
-        document.getElementById('titulo-login').innerText = modoRegistro ? "Registrar" : "Login";
-        document.getElementById('btn-acao').innerText = modoRegistro ? "Cadastrar" : "Entrar";
-        document.getElementById('btn-alternar').innerText = modoRegistro ? "Já tenho conta" : "Criar nova conta";
-    }
-
-    function processarAcao() {
-        const email = document.getElementById('email').value;
-        const senha = document.getElementById('senha').value;
-
-        if (modoRegistro) {
-            // REGISTRAR
-            localStorage.setItem('user_data', JSON.stringify({ email, senha }));
-            alert("Conta registrada com sucesso!");
-            alternarModo();
-        } else {
-            // LOGIN
-            const userData = JSON.parse(localStorage.getItem('user_data'));
-            if (userData && userData.email === email && userData.senha === senha) {
-                localStorage.setItem('logado', 'true');
-                document.getElementById('login-screen').style.display = 'none';
-            } else {
-                alert("E-mail ou senha incorretos ou não cadastrados!");
-            }
-        }
+        atualizarFinanceiro();
+        atualizarBloqueios();
+        renderDashboard();
     }
 
-    function pedirAjuda() {
-        alert("Entre em contato: suporte@estudiobeleza.com ou via WhatsApp.");
+    function movimentar(index, delta) {
+        const list = Storage.get('inventario') || [];
+        if (!list[index]) return;
+        list[index].qtd = Math.max(0, list[index].qtd + delta);
+        Storage.set('inventario', list);
+        atualizarTudo();
     }
 
-    // Verifica login ao carregar
-    if (localStorage.getItem('logado') === 'true') {
-        document.getElementById('login-screen').style.display = 'none';
-    }
-
-    // Verifica se já está logado ao carregar
-    if (localStorage.getItem('logado') === 'true') {
-        document.getElementById('login-screen').style.display = 'none';
-    }
-
-// Gestão de Inventário e Baixa
-        function salvarProduto() {
-            let list = JSON.parse(localStorage.getItem('inventario') || '[]');
-            list.push({nome: document.getElementById('prodNome').value, qtd: parseInt(document.getElementById('prodQtd').value)});
-            localStorage.setItem('inventario', JSON.stringify(list));
-            atualizarTudo();
-        }
-
-        function movimentar(index, delta) {
-            let list = JSON.parse(localStorage.getItem('inventario'));
-            list[index].qtd = Math.max(0, list[index].qtd + delta);
-            localStorage.setItem('inventario', JSON.stringify(list));
-            atualizarTudo();
-        }
-
-        function salvarFornecedor() {
-            let list = JSON.parse(localStorage.getItem('fornecedores') || '[]');
-            list.push({nome: document.getElementById('fNome').value, tel: document.getElementById('fTel').value});
-            localStorage.setItem('fornecedores', JSON.stringify(list));
-            atualizarTudo();
-        }
-
-        // NAVEGAÇÃO
-
-        function show(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        function resetarAgenda() {
-            if(confirm("Deseja apagar TODOS os agendamentos?")) {
-                localStorage.removeItem('agenda');
-                atualizarTudo();
-                atualizarBloqueios();
-            }
-        }
-
-        function atualizarBloqueios() {
-            let ags = JSON.parse(localStorage.getItem('agenda') || '[]');
-            document.querySelectorAll('.btn-hora').forEach(btn => {
-                btn.classList.remove('ocupado', 'bg-black', 'text-white');
-                btn.disabled = false;
-                if (ags.find(a => a.data == dataEscolhida && a.hora == btn.innerText)) {
-                    btn.classList.add('ocupado');
-                    btn.disabled = true;
-                }
-            });
-        }
-
-        // SELEÇÃO DE DATA E HORA
-        function selecionarData(dia) {
-            dataEscolhida = dia;
-            horaEscolhida = null;
-            document.querySelectorAll('.cal-dia').forEach(d => d.classList.remove('bg-rose-600', 'text-white'));
-            document.getElementById(`dia-${dia}`).classList.add('bg-rose-600', 'text-white');
-            document.getElementById('status-agendamento').innerText = `Data: ${dia}/05`;
-            atualizarBloqueios();
-        }
-        
-        function selecionarHora(hora, btn) {
-            if(btn.disabled) return;
-            horaEscolhida = hora;
-            document.querySelectorAll('.btn-hora').forEach(b => b.classList.remove('bg-black', 'text-white'));
-            btn.classList.add('bg-black', 'text-white');
-        }
-
-        // SALVAMENTO DE DADOS
-        function salvarCliente() {
-            let list = JSON.parse(localStorage.getItem('clientes') || '[]');
-            list.push({nome: document.getElementById('nomeC').value, tel: document.getElementById('telC').value});
-            localStorage.setItem('clientes', JSON.stringify(list));
-            atualizarTudo();
-            document.getElementById('nomeC').value = ''; document.getElementById('telC').value = '';
-        }
-
-        function salvarServico() {
-            let list = JSON.parse(localStorage.getItem('servicos') || '[]');
-            list.push({nome: document.getElementById('nomeS').value, preco: document.getElementById('precoS').value});
-            localStorage.setItem('servicos', JSON.stringify(list));
-            atualizarTudo();
-            document.getElementById('nomeS').value = ''; document.getElementById('precoS').value = '';
-        }
-
-        function salvarEstoque() {
-            let list = JSON.parse(localStorage.getItem('estoque') || '[]');
-            list.push({item: document.getElementById('itemE').value, qtd: document.getElementById('qtdE').value});
-            localStorage.setItem('estoque', JSON.stringify(list));
-            atualizarTudo();
-            document.getElementById('itemE').value = ''; document.getElementById('qtdE').value = '';
-        }
-
-        function salvarAgendamento() {
-            let ags = JSON.parse(localStorage.getItem('agenda') || '[]');
-            if(ags.find(a => a.data == dataEscolhida && a.hora == horaEscolhida)) return alert("Horário ocupado!");
-            
-            let cl = document.getElementById('clienteSelect').value;
-            let serv = document.getElementById('servicoSelect').value;
-            let cliList = JSON.parse(localStorage.getItem('clientes') || '[]');
-            let dadosCli = cliList.find(c => c.nome === cl);
-
-            if(!dataEscolhida || !horaEscolhida) return alert("Escolha data e hora!");
-            
-            ags.push({cliente: cl, servico: serv, telefone: dadosCli ? dadosCli.tel : '', data: dataEscolhida, hora: horaEscolhida});
-            localStorage.setItem('agenda', JSON.stringify(ags));
-            alert("Sucesso!");
-            atualizarTudo();
-            atualizarBloqueios();
-        }
-
-        // REMOÇÃO
-        function removerItem(storageKey, index) {
-            if(confirm("Tem certeza que deseja remover este item?")) {
-                let list = JSON.parse(localStorage.getItem(storageKey) || '[]');
-                list.splice(index, 1);
-                localStorage.setItem(storageKey, JSON.stringify(list));
-                atualizarTudo();
-            }
-        }
-
-
-        // ATUALIZAÇÃO DA TELA
-        function atualizarTudo() {
-            // Clientes
-            let cList = JSON.parse(localStorage.getItem('clientes') || '[]');
-            document.getElementById('listaClientes').innerHTML = cList.map((c, i) => `
-                <div class="bg-white p-3 border rounded flex justify-between items-center shadow-sm">
-                    <span><strong>${c.nome}</strong> (${c.tel})</span>
-                    <button onclick="removerItem('clientes', ${i})" class="text-red-500 hover:text-red-700 font-bold">Excluir</button>
-                </div>`).join('');
-            document.getElementById('clienteSelect').innerHTML = cList.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
-
-            // Serviços
-            let sList = JSON.parse(localStorage.getItem('servicos') || '[]');
-            document.getElementById('listaServicos').innerHTML = sList.map((s, i) => `
-                <div class="bg-white p-3 border rounded flex justify-between items-center shadow-sm">
-                    <span><strong>${s.nome}</strong> - R$ ${s.preco}</span>
-                    <button onclick="removerItem('servicos', ${i})" class="text-red-500 hover:text-red-700 font-bold">Excluir</button>
-                </div>`).join('');
-            document.getElementById('servicoSelect').innerHTML = sList.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
-
-
-            // Render Fornecedores
-            let forn = JSON.parse(localStorage.getItem('fornecedores') || '[]');
-            document.getElementById('listaFornecedores').innerHTML = forn.map(f => `
-                <div class="bg-white p-3 border rounded">${f.nome} - ${f.tel}</div>`).join('');
+    function atualizarFinanceiro() {
+        let registros = Storage.get('financeiro') || [];
         
-            // Render Inventário
-            let inv = JSON.parse(localStorage.getItem('inventario') || '[]');
-            document.getElementById('listaInventario').innerHTML = inv.map((p, i) => `
-                <div class="bg-white p-3 border rounded flex justify-between">
-                    <span>${p.nome}: <strong>${p.qtd}</strong></span>
-                    <div>
-                        <button onclick="movimentar(${i}, 1)" class="bg-green-100 px-2">+</button>
-                        <button onclick="movimentar(${i}, -1)" class="bg-red-100 px-2">-</button>
-                    </div>
-                </div>`).join('');
-            
-                // Agendamentos
-            let ags = JSON.parse(localStorage.getItem('agenda') || '[]');
-            document.getElementById('listaAgendamentos').innerHTML = ags.map((a, i) => `
-                <div class="bg-white p-4 border-l-4 border-rose-600 rounded shadow-sm flex justify-between items-center">
-                    <div>
-                        <strong class="text-lg text-gray-800">${a.cliente}</strong><br>
-                        <span class="text-rose-600 font-bold">${a.servico}</span><br>
-                        <span class="text-gray-600">Dia ${a.data}/05 às ${a.hora}</span>
-                    </div>
-                    <div class="flex gap-4 items-center">
-                        <a href="https://wa.me/${a.telefone}" target="_blank" class="text-green-600 text-2xl hover:text-green-700">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                        <button onclick="removerItem('agenda', ${i})" class="bg-gray-100 text-red-500 p-2 rounded hover:bg-red-50">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>`).join('');
-        }
+        // Obter o seletor de mês disponível (dashboard ou financeiro)
+        let mesFilterInput = document.getElementById('mesFilter');
+        if (!mesFilterInput || !mesFilterInput.value) {
+            mesFilterInput = document.getElementById('mesFilterFinanceiro');
+        }
+        
+        // Filtrar por mês se selecionado
+        if (mesFilterInput && mesFilterInput.value) {
+            const [ano, mes] = mesFilterInput.value.split('-');
+            registros = registros.filter(r => {
+                if (!r.data) return false;
+                const dataParts = r.data.split('/');
+                if (dataParts.length !== 3) return false;
+                const mesRegistro = parseInt(dataParts[1]);
+                const anoRegistro = parseInt(dataParts[2]);
+                return mesRegistro === parseInt(mes) && anoRegistro === parseInt(ano);
+            });
+        }
+        
+        totalServicos = registros.filter(r => r.type === 'servico').reduce((sum, item) => sum + item.valor, 0);
+        totalDespesas = registros.filter(r => r.type === 'despesa').reduce((sum, item) => sum + item.valor, 0);
+        totalAgendamentos = registros.filter(r => r.type === 'servico').length;
+        totalFinalizados = registros.filter(r => r.status === 'Finalizado').length;
 
+        document.getElementById('totalServicos').innerText = `R$ ${totalServicos.toFixed(2)}`;
+        document.getElementById('totalDespesas').innerText = `R$ ${totalDespesas.toFixed(2)}`;
+        document.getElementById('totalAgendamentos').innerText = totalAgendamentos;
+        document.getElementById('agendamentosFinalizados').innerText = totalFinalizados;
+        document.getElementById('totalServicosDashboard').innerText = `R$ ${totalServicos.toFixed(2)}`;
+        document.getElementById('totalDespesasDashboard').innerText = `R$ ${totalDespesas.toFixed(2)}`;
+        document.getElementById('totalAgendamentosDashboard').innerText = totalAgendamentos;
+        document.getElementById('finalizadosDashboard').innerText = totalFinalizados;
 
+        const totalServicosFinalizados = registros.filter(r => r.type === 'servico' && r.status === 'Finalizado').reduce((sum, item) => sum + item.valor, 0);
+        const totalSalao = totalServicosFinalizados * 0.3;
+        const totalMaterial = totalServicosFinalizados * 0.15;
+        const totalLucro = totalServicosFinalizados - totalSalao - totalMaterial;
 
-        // Inicializa os dados ao carregar
-        atualizarTudo();
-    </script>
+        document.getElementById('salaoDashboard').innerText = `R$ ${totalSalao.toFixed(2)}`;
+        document.getElementById('materialDashboard').innerText = `R$ ${totalMaterial.toFixed(2)}`;
+        document.getElementById('lucroDashboard').innerText = `R$ ${totalLucro.toFixed(2)}`;
+
+        const tabela = document.getElementById('tabelaFinanceiro');
+        tabela.innerHTML = registros.map(record => `
+            <tr class="border-b border-gray-200 dark:border-slate-700">
+                <td class="py-4">
+                    ${record.descricao}
+                    <br>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">${record.status || ''}</span>
+                </td>
+                <td>${record.data}</td>
+                <td class="font-bold ${record.type === 'despesa' ? 'text-red-500' : 'text-green-600'}">
+                    ${record.type === 'despesa' ? '- ' : '+ '}R$ ${record.valor.toFixed(2)}
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function adicionarServico() {
+        const cliente = document.getElementById('servicoCliente').value.trim();
+        const servico = document.getElementById('servicoNome').value.trim();
+        const valor = parseFloat(document.getElementById('valorServico').value);
+        const status = document.getElementById('statusAgendamento').value;
+
+        if (!cliente || !servico || isNaN(valor)) {
+            alert('Preencha todos os campos.');
+            return;
+        }
+
+        const registros = Storage.get('financeiro') || [];
+        const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+        const novoServico = {
+            type: 'servico',
+            descricao: `${cliente} - ${servico}`,
+            valor,
+            status,
+            data: new Date().toLocaleDateString(),
+            hora: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'}),
+            telefone: userData?.telefone || ''
+        };
+        registros.unshift(novoServico);
+        Storage.set('financeiro', registros);
+        
+        // Enviar WhatsApp automático
+        if (userData?.telefone) {
+            enviarWhatsAppAgendamento(cliente, servico, new Date().toLocaleDateString('pt-BR'), novoServico.hora, userData.telefone);
+        }
+        
+        document.getElementById('servicoCliente').value = '';
+        document.getElementById('servicoNome').value = '';
+        document.getElementById('valorServico').value = '';
+        // Limpar filtro de mês para mostrar todos os dados
+        const mesFilter = document.getElementById('mesFilter');
+        if (mesFilter) mesFilter.value = '';
+        atualizarFinanceiro();
+        renderDashboard();
+    }
+
+    function enviarWhatsAppAgendamento(cliente, servico, dia, hora, telefone) {
+        const mensagem = `Olá ${cliente} 👋\nSeu horário foi marcado:\n📅 Dia: ${dia}\n⏰ Horário: ${hora}\n💇 Serviço: ${servico}`;
+        const link = `https://wa.me/${telefone.replace(/\D/g, '')}?text=${encodeURIComponent(mensagem)}`;
+        window.open(link, '_blank');
+    }
+
+    function adicionarDespesa() {
+        const nome = document.getElementById('nomeDespesa').value.trim();
+        const valor = parseFloat(document.getElementById('valorDespesa').value);
+        if (!nome || isNaN(valor)) {
+            alert('Preencha todos os campos.');
+            return;
+        }
+
+        const registros = Storage.get('financeiro') || [];
+        registros.unshift({
+            type: 'despesa',
+            descricao: nome,
+            valor,
+            data: new Date().toLocaleDateString()
+        });
+        Storage.set('financeiro', registros);
+        document.getElementById('nomeDespesa').value = '';
+        document.getElementById('valorDespesa').value = '';
+        // Limpar filtro de mês para mostrar todos os dados
+        const mesFilter = document.getElementById('mesFilter');
+        if (mesFilter) mesFilter.value = '';
+        atualizarFinanceiro();
+        renderDashboard();
+    }
+
+    function renderDashboard() {
+        const ags = Storage.get('agenda') || [];
+        document.getElementById('totalAgendamentosDashboard').innerText = ags.length || 0;
+        document.getElementById('finalizadosDashboard').innerText = ags.filter(a => a.status === 'Finalizado').length;
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        init();
+        // Define o mês atual nos seletores
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+        const mesFilterValue = `${ano}-${mes}`;
+        
+        const mesFilter = document.getElementById('mesFilter');
+        if (mesFilter) {
+            mesFilter.value = mesFilterValue;
+        }
+        
+        const mesFilterFinanceiro = document.getElementById('mesFilterFinanceiro');
+        if (mesFilterFinanceiro) {
+            mesFilterFinanceiro.value = mesFilterValue;
+        }
+        
+        atualizarFinanceiro();
+    });
+</script>
+
 </body>
 </html>
