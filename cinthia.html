@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Cinthia Monteiro - Estúdio de Beleza</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+       .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; border: 1px solid #ccc; background-color: #ccc; }
+        .cal-dia { background-color: white; height: 60px; padding: 5px; text-align: right; cursor: pointer; transition: 0.2s; }
+        .hidden { display: none; }
+        .btn-hora { transition: 0.3s; cursor: pointer; }
+        .btn-hora.ocupado { background-color: #ef4444 !important; color: white !important; cursor: not-allowed; opacity: 0.6; }
+    </style>
+</head>
+<body class="bg-gray-100 flex h-screen">
+
+<div id="login-screen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-96">
+        <h2 id="titulo-login" class="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
+
+        <input id="email" type="email" placeholder="E-mail" class="w-full border p-2 mb-4 rounded">
+        <input id="senha" type="password" placeholder="Senha" class="w-full border p-2 mb-6 rounded">
+        
+        <button onclick="recuperarSenha()" class="text-sm text-blue-500 underline">Esqueci minha senha</button>
+        <button id="btn-acao" onclick="processarAcao()" class="w-full bg-rose-600 text-white py-2 rounded font-bold hover:bg-rose-700">Entrar</button>
+        
+        <div class="mt-4 text-center text-sm">
+            <button id="btn-alternar" onclick="alternarModo()" class="text-blue-600 hover:underline">Criar nova conta</button>
+            <br><br>
+            <button onclick="pedirAjuda()" class="text-gray-500 hover:underline">Precisa de ajuda?</button>
+        </div>
+    </div>
+</div>
+
+    <aside class="w-64 bg-slate-900 text-white p-6 flex flex-col shadow-xl">
+        <div class="flex items-center gap-3 mb-10">
+            <img id="nav-foto" src="https://ui-avatars.com/api/?name=User" class="w-12 h-12 rounded-full object-cover border-2 border-rose-500">
+            <div>
+                <p id="nav-nome" class="font-bold text-sm">Usuário</p>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest">Administrador</p>
+            </div>
+        </div>
+<nav class="space-y-4">
+            <button onclick="show('agenda')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">📅 Agenda</button>
+            <button onclick="show('clientes')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">👥 Clientes</button>
+            <button onclick="show('servicos')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">✨Serviços</button>
+            <button onclick="show('lista-agendamentos')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">📋Agendamentos Salvos</button>
+            <button onclick="show('fornecedores')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">💵Financeiro</button>
+            <button onclick="show('inventario')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">📦 Inventário</button>
+            <button onclick="show('fornecedores')" class="w-full text-left p-3 font-bold hover:bg-rose-100 rounded text-gray-700">🚚 Fornecedores</button>
+            <button onclick="resetarAgenda()" class="w-full text-left p-3 font-bold text-red-600 hover:bg-rose-100 rounded text-gray-700">⚠️ Resetar Calendário</button>
+            <button onclick="show('perfil')" class="w-full text-left p-3 font-bold text-red-600 hover:bg-rose-100 rounded text-gray-700">👤 Meu Perfil</button>
+            <button onclick="show('admin')" class="w-full text-left p-3 font-bold text-red-600 hover:bg-rose-100 rounded text-gray-700">⚙️ Aprovar Registros</button>
+        </nav>
+    <button onclick="sair()" class="block w-full text-left p-3 mt-auto bg-slate-800 hover:bg-red-900 rounded text-red-400 transition">
+            <i class="fas fa-sign-out-alt"></i> Sair da Conta
+        </button>
+    </aside>
+  
+<main class="flex-1 p-8 overflow-y-auto">
+
+<section id="perfil" class="max-w-xl mx-auto bg-white p-8 rounded shadow">
+    <h2 class="text-2xl font-bold mb-6">Configurações de Perfil</h2>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div class="w-32 h-32 rounded-full bg-gray-200 mb-4 overflow-hidden border-4 border-rose-600">
+            <img id="fotoPreview" src="https://via.placeholder.com/150" class="w-full h-full object-cover">
+            <input type="file" onchange="uploadFoto(this)" class="text-sm text-gray-500">
+        </div>
+        <input type="file" id="fotoInput" onchange="previewImagem(this)" class="text-sm">
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+        <input id="pNome" placeholder="Nome" class="border p-2 rounded">
+        <input id="pSobre" placeholder="Sobrenome" class="border p-2 rounded">
+        <input id="pTel" placeholder="Telefone" class="border p-2 rounded col-span-2">
+        <input id="pEmail" placeholder="E-mail" class="border p-2 rounded col-span-2">
+        <input id="pNome Da Empresa" placeholder="Nome Da Empresa" class="border p-2 rounded col-span-2">
+        <select id="pUso" class="border p-2 rounded col-span-2">
+            <option value="">Qual será seu uso?</option>
+            <option value="pessoal">Uso Pessoal</option>
+            <option value="profissional">Uso Profissional/Estúdio</option>
+        </select>
+    </div>
+
+    <button onclick="salvarPerfil()" class="mt-6 w-full bg-rose-600 text-white py-3 rounded font-bold hover:bg-rose-700">
+        <i class="fas fa-save mr-2"></i> Salvar Perfil
+    </button>
+</section>
+    
+<section id="perfil" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Editar Perfil</h2>
+            <input id="editNome" placeholder="Nome de Usuário" class="border p-2 mb-2 w-full">
+            <input type="file" id="fotoPerfil" class="mb-2">
+            <button onclick="salvarPerfil()" class="bg-blue-600 text-white px-4 py-2">Salvar Alterações</button>
+        </section>
+
+        <section id="admin" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Solicitações de Registro</h2>
+            <div id="listaPendentes" class="space-y-2"></div>
+        </section>
+
+        <section id="agenda" class="max-w-4xl">
+            <h2 class="text-2xl font-bold mb-4">Novo Agendamento</h2>
+            <div class="cal-grid bg-white rounded shadow p-1">
+          
+                <script>
+                    for(let i = 1; i <= 31; i++) {
+                        document.write(`<div onclick="selecionarData(${i})" id="dia-${i}" class="cal-dia hover:bg-rose-200">${i}</div>`);
+                    }
+                </script>
+            </div>
+            <div class="mt-6 bg-white p-6 rounded shadow space-y-4">
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">Selecione a Cliente:</label>
+                    <select id="clienteSelect" class="border p-2 w-full rounded"></select>
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">Selecione o Serviço:</label>
+                    <select id="servicoSelect" class="border p-2 w-full rounded"></select>
+                </div>
+                <p id="status-agendamento" class="text-rose-600 font-bold">Selecione dia e hora...</p>
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="selecionarHora('08:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">08:00</button>
+                    <button onclick="selecionarHora('09:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">09:00</button>
+                    <button onclick="selecionarHora('10:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">10:00</button>
+                    <button onclick="selecionarHora('11:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">11:00</button>
+                    <button onclick="selecionarHora('13:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">13:00</button>
+                    <button onclick="selecionarHora('14:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">14:00</button>
+                    <button onclick="selecionarHora('15:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">15:00</button>
+                    <button onclick="selecionarHora('16:00', this)" class="btn-hora border p-2 rounded hover:bg-black hover:text-white transition">16:00</button>
+                </div>
+                <button onclick="salvarAgendamento()" class="w-full bg-rose-600 text-white font-bold py-3 rounded shadow hover:bg-rose-700">Confirmar Agendamento</button>
+            </div>
+        </section>
+
+        <section id="clientes" class="hidden max-w-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Clientes</h2>
+            <div class="bg-white p-4 rounded shadow mb-6">
+                <input id="nomeC" placeholder="Nome da Cliente" class="border p-2 w-full mb-2 rounded">
+                <input id="telC" placeholder="WhatsApp (ex: 5511999999999)" class="border p-2 w-full mb-2 rounded">
+                <button onclick="salvarCliente()" class="bg-green-600 text-white px-6 py-2 rounded font-bold">Salvar Cliente</button>
+            </div>
+            <div id="listaClientes" class="space-y-2"></div>
+        </section>
+
+        <section id="servicos" class="hidden max-w-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Serviços</h2>
+            <div class="bg-white p-4 rounded shadow mb-6">
+                <input id="nomeS" placeholder="Nome do Serviço (ex: Cílios Fio a Fio)" class="border p-2 w-full mb-2 rounded">
+                <input id="precoS" placeholder="Preço (ex: 150,00)" class="border p-2 w-full mb-2 rounded">
+                <button onclick="salvarServico()" class="bg-purple-600 text-white px-6 py-2 rounded font-bold">Salvar Serviço</button>
+            </div>
+            <div id="listaServicos" class="space-y-2"></div>
+        </section>
+
+        <section id="estoque" class="hidden max-w-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Estoque de Materiais</h2>
+            <div class="bg-white p-4 rounded shadow mb-6">
+                <input id="itemE" placeholder="Produto" class="border p-2 w-full mb-2 rounded">
+                <input id="qtdE" type="number" placeholder="Quantidade" class="border p-2 w-full mb-2 rounded">
+                <button onclick="salvarEstoque()" class="bg-blue-600 text-white px-6 py-2 rounded font-bold">Adicionar Material</button>
+            </div>
+            <div id="listaEstoque" class="space-y-2"></div>
+        </section>
+
+        <section id="lista-agendamentos" class="hidden max-w-3xl">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Agendamentos Salvos</h2>
+            <div id="listaAgendamentos" class="space-y-3"></div>
+        </section>
+
+        <section id="inventario" class="hidden max-w-2xl">
+            <h2 class="text-2xl font-bold mb-4">Inventário</h2>
+            <div class="bg-white p-4 rounded shadow mb-6 flex gap-2">
+                <input id="prodNome" placeholder="Produto" class="border p-2 flex-1 rounded">
+                <input id="prodQtd" type="number" placeholder="Qtd" class="border w-20 p-2 rounded">
+                <button onclick="salvarProduto()" class="bg-blue-600 text-white px-4 py-2 rounded font-bold">Salvar</button>
+            </div>
+            <div id="listaInventario" class="space-y-2"></div>
+        </section>
+
+        <section id="fornecedores" class="hidden max-w-2xl">
+            <h2 class="text-2xl font-bold mb-4">Fornecedores</h2>
+            <div class="bg-white p-4 rounded shadow mb-6">
+                <input id="fNome" placeholder="Nome Empresa" class="border p-2 w-full mb-2 rounded">
+                <input id="fTel" placeholder="Contato" class="border p-2 w-full mb-2 rounded">
+                <button onclick="salvarFornecedor()" class="bg-slate-700 text-white px-6 py-2 rounded font-bold">Salvar</button>
+            </div>
+            <div id="listaFornecedores" class="space-y-2"></div>
+        </section>
+
+        <section id="admin" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Solicitações de Registro</h2>
+            <div id="listaPendentes" class="space-y-2"></div>
+        </section>
+
+        <section id="clientes" class="hidden"></section>
+        <section id="servicos" class="hidden"></section>
+        <section id="lista-agendamentos" class="hidden"></section>
+    </main>
+
+
+<script>
+      
+     // Preview da imagem e conversão para Base64
+    function previewImagem(input) {
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('fotoPreview').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function salvarPerfil() {
+        const dados = {
+            nome: document.getElementById('pNome').value,
+            sobre: document.getElementById('pSobre').value,
+            tel: document.getElementById('pTel').value,
+            email: document.getElementById('pEmail').value,
+            uso: document.getElementById('pUso').value,
+            foto: document.getElementById('fotoPreview').src
+        };
+        
+        localStorage.setItem('perfil_usuario', JSON.stringify(dados));
+        alert("Perfil salvo com sucesso!");
+    }
+
+    // Carregar dados ao abrir a página
+    window.onload = function() {
+        const dados = JSON.parse(localStorage.getItem('perfil_usuario'));
+        if (dados) {
+            document.getElementById('pNome').value = dados.nome || '';
+            document.getElementById('pSobre').value = dados.sobre || '';
+            document.getElementById('pTel').value = dados.tel || '';
+            document.getElementById('pEmail').value = dados.email || '';
+            document.getElementById('pUso').value = dados.uso || '';
+            document.getElementById('fotoPreview').src = dados.foto;
+        }
+    } 
+      
+      // --- FUNÇÕES DE LOGIC ---
+
+        function recuperarSenha() {
+            alert("Um link de redefinição foi enviado para o seu e-mail (Simulação).");
+        }
+
+        function salvarPerfil() {
+            const nome = document.getElementById('editNome').value;
+            localStorage.setItem('user_nome', nome);
+            alert("Perfil atualizado!");
+        }
+
+        function aprovarUsuario(index) {
+            let pendentes = JSON.parse(localStorage.getItem('pendentes') || '[]');
+            let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+            
+            // Move de pendentes para usuários aprovados
+            usuarios.push(pendentes[index]);
+            pendentes.splice(index, 1);
+            
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            localStorage.setItem('pendentes', JSON.stringify(pendentes));
+            renderAdmin();
+        }
+
+        function renderAdmin() {
+            let pendentes = JSON.parse(localStorage.getItem('pendentes') || '[]');
+            document.getElementById('listaPendentes').innerHTML = pendentes.map((u, i) => `
+                <div class="bg-white p-4 flex justify-between">
+                    <span>${u.email}</span>
+                    <button onclick="aprovarUsuario(${i})" class="bg-green-500 text-white px-2">Aprovar</button>
+                </div>
+            `).join('');
+        }
+
+        function show(id) {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+
+    </script>
+
+
+    <script>
+        let dataEscolhida = null, horaEscolhida = null;
+
+
+    let modoRegistro = false;
+
+    function sair() {
+        if (confirm("Você deseja encerrar sua sessão?")) {
+            localStorage.removeItem('logado');
+            location.reload();
+        }
+    }
+   
+    function alternarModo() {
+        modoRegistro = !modoRegistro;
+        document.getElementById('titulo-login').innerText = modoRegistro ? "Registrar" : "Login";
+        document.getElementById('btn-acao').innerText = modoRegistro ? "Cadastrar" : "Entrar";
+        document.getElementById('btn-alternar').innerText = modoRegistro ? "Já tenho conta" : "Criar nova conta";
+    }
+
+    function processarAcao() {
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+
+        if (modoRegistro) {
+            // REGISTRAR
+            localStorage.setItem('user_data', JSON.stringify({ email, senha }));
+            alert("Conta registrada com sucesso!");
+            alternarModo();
+        } else {
+            // LOGIN
+            const userData = JSON.parse(localStorage.getItem('user_data'));
+            if (userData && userData.email === email && userData.senha === senha) {
+                localStorage.setItem('logado', 'true');
+                document.getElementById('login-screen').style.display = 'none';
+            } else {
+                alert("E-mail ou senha incorretos ou não cadastrados!");
+            }
+        }
+    }
+
+    function pedirAjuda() {
+        alert("Entre em contato: suporte@estudiobeleza.com ou via WhatsApp.");
+    }
+
+    // Verifica login ao carregar
+    if (localStorage.getItem('logado') === 'true') {
+        document.getElementById('login-screen').style.display = 'none';
+    }
+
+    // Verifica se já está logado ao carregar
+    if (localStorage.getItem('logado') === 'true') {
+        document.getElementById('login-screen').style.display = 'none';
+    }
+
+// Gestão de Inventário e Baixa
+        function salvarProduto() {
+            let list = JSON.parse(localStorage.getItem('inventario') || '[]');
+            list.push({nome: document.getElementById('prodNome').value, qtd: parseInt(document.getElementById('prodQtd').value)});
+            localStorage.setItem('inventario', JSON.stringify(list));
+            atualizarTudo();
+        }
+
+        function movimentar(index, delta) {
+            let list = JSON.parse(localStorage.getItem('inventario'));
+            list[index].qtd = Math.max(0, list[index].qtd + delta);
+            localStorage.setItem('inventario', JSON.stringify(list));
+            atualizarTudo();
+        }
+
+        function salvarFornecedor() {
+            let list = JSON.parse(localStorage.getItem('fornecedores') || '[]');
+            list.push({nome: document.getElementById('fNome').value, tel: document.getElementById('fTel').value});
+            localStorage.setItem('fornecedores', JSON.stringify(list));
+            atualizarTudo();
+        }
+
+        // NAVEGAÇÃO
+
+        function show(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function resetarAgenda() {
+            if(confirm("Deseja apagar TODOS os agendamentos?")) {
+                localStorage.removeItem('agenda');
+                atualizarTudo();
+                atualizarBloqueios();
+            }
+        }
+
+        function atualizarBloqueios() {
+            let ags = JSON.parse(localStorage.getItem('agenda') || '[]');
+            document.querySelectorAll('.btn-hora').forEach(btn => {
+                btn.classList.remove('ocupado', 'bg-black', 'text-white');
+                btn.disabled = false;
+                if (ags.find(a => a.data == dataEscolhida && a.hora == btn.innerText)) {
+                    btn.classList.add('ocupado');
+                    btn.disabled = true;
+                }
+            });
+        }
+
+        // SELEÇÃO DE DATA E HORA
+        function selecionarData(dia) {
+            dataEscolhida = dia;
+            horaEscolhida = null;
+            document.querySelectorAll('.cal-dia').forEach(d => d.classList.remove('bg-rose-600', 'text-white'));
+            document.getElementById(`dia-${dia}`).classList.add('bg-rose-600', 'text-white');
+            document.getElementById('status-agendamento').innerText = `Data: ${dia}/05`;
+            atualizarBloqueios();
+        }
+        
+        function selecionarHora(hora, btn) {
+            if(btn.disabled) return;
+            horaEscolhida = hora;
+            document.querySelectorAll('.btn-hora').forEach(b => b.classList.remove('bg-black', 'text-white'));
+            btn.classList.add('bg-black', 'text-white');
+        }
+
+        // SALVAMENTO DE DADOS
+        function salvarCliente() {
+            let list = JSON.parse(localStorage.getItem('clientes') || '[]');
+            list.push({nome: document.getElementById('nomeC').value, tel: document.getElementById('telC').value});
+            localStorage.setItem('clientes', JSON.stringify(list));
+            atualizarTudo();
+            document.getElementById('nomeC').value = ''; document.getElementById('telC').value = '';
+        }
+
+        function salvarServico() {
+            let list = JSON.parse(localStorage.getItem('servicos') || '[]');
+            list.push({nome: document.getElementById('nomeS').value, preco: document.getElementById('precoS').value});
+            localStorage.setItem('servicos', JSON.stringify(list));
+            atualizarTudo();
+            document.getElementById('nomeS').value = ''; document.getElementById('precoS').value = '';
+        }
+
+        function salvarEstoque() {
+            let list = JSON.parse(localStorage.getItem('estoque') || '[]');
+            list.push({item: document.getElementById('itemE').value, qtd: document.getElementById('qtdE').value});
+            localStorage.setItem('estoque', JSON.stringify(list));
+            atualizarTudo();
+            document.getElementById('itemE').value = ''; document.getElementById('qtdE').value = '';
+        }
+
+        function salvarAgendamento() {
+            let ags = JSON.parse(localStorage.getItem('agenda') || '[]');
+            if(ags.find(a => a.data == dataEscolhida && a.hora == horaEscolhida)) return alert("Horário ocupado!");
+            
+            let cl = document.getElementById('clienteSelect').value;
+            let serv = document.getElementById('servicoSelect').value;
+            let cliList = JSON.parse(localStorage.getItem('clientes') || '[]');
+            let dadosCli = cliList.find(c => c.nome === cl);
+
+            if(!dataEscolhida || !horaEscolhida) return alert("Escolha data e hora!");
+            
+            ags.push({cliente: cl, servico: serv, telefone: dadosCli ? dadosCli.tel : '', data: dataEscolhida, hora: horaEscolhida});
+            localStorage.setItem('agenda', JSON.stringify(ags));
+            alert("Sucesso!");
+            atualizarTudo();
+            atualizarBloqueios();
+        }
+
+        // REMOÇÃO
+        function removerItem(storageKey, index) {
+            if(confirm("Tem certeza que deseja remover este item?")) {
+                let list = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                list.splice(index, 1);
+                localStorage.setItem(storageKey, JSON.stringify(list));
+                atualizarTudo();
+            }
+        }
+
+
+        // ATUALIZAÇÃO DA TELA
+        function atualizarTudo() {
+            // Clientes
+            let cList = JSON.parse(localStorage.getItem('clientes') || '[]');
+            document.getElementById('listaClientes').innerHTML = cList.map((c, i) => `
+                <div class="bg-white p-3 border rounded flex justify-between items-center shadow-sm">
+                    <span><strong>${c.nome}</strong> (${c.tel})</span>
+                    <button onclick="removerItem('clientes', ${i})" class="text-red-500 hover:text-red-700 font-bold">Excluir</button>
+                </div>`).join('');
+            document.getElementById('clienteSelect').innerHTML = cList.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+
+            // Serviços
+            let sList = JSON.parse(localStorage.getItem('servicos') || '[]');
+            document.getElementById('listaServicos').innerHTML = sList.map((s, i) => `
+                <div class="bg-white p-3 border rounded flex justify-between items-center shadow-sm">
+                    <span><strong>${s.nome}</strong> - R$ ${s.preco}</span>
+                    <button onclick="removerItem('servicos', ${i})" class="text-red-500 hover:text-red-700 font-bold">Excluir</button>
+                </div>`).join('');
+            document.getElementById('servicoSelect').innerHTML = sList.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
+
+
+            // Render Fornecedores
+            let forn = JSON.parse(localStorage.getItem('fornecedores') || '[]');
+            document.getElementById('listaFornecedores').innerHTML = forn.map(f => `
+                <div class="bg-white p-3 border rounded">${f.nome} - ${f.tel}</div>`).join('');
+        
+            // Render Inventário
+            let inv = JSON.parse(localStorage.getItem('inventario') || '[]');
+            document.getElementById('listaInventario').innerHTML = inv.map((p, i) => `
+                <div class="bg-white p-3 border rounded flex justify-between">
+                    <span>${p.nome}: <strong>${p.qtd}</strong></span>
+                    <div>
+                        <button onclick="movimentar(${i}, 1)" class="bg-green-100 px-2">+</button>
+                        <button onclick="movimentar(${i}, -1)" class="bg-red-100 px-2">-</button>
+                    </div>
+                </div>`).join('');
+            
+                // Agendamentos
+            let ags = JSON.parse(localStorage.getItem('agenda') || '[]');
+            document.getElementById('listaAgendamentos').innerHTML = ags.map((a, i) => `
+                <div class="bg-white p-4 border-l-4 border-rose-600 rounded shadow-sm flex justify-between items-center">
+                    <div>
+                        <strong class="text-lg text-gray-800">${a.cliente}</strong><br>
+                        <span class="text-rose-600 font-bold">${a.servico}</span><br>
+                        <span class="text-gray-600">Dia ${a.data}/05 às ${a.hora}</span>
+                    </div>
+                    <div class="flex gap-4 items-center">
+                        <a href="https://wa.me/${a.telefone}" target="_blank" class="text-green-600 text-2xl hover:text-green-700">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <button onclick="removerItem('agenda', ${i})" class="bg-gray-100 text-red-500 p-2 rounded hover:bg-red-50">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>`).join('');
+        }
+
+
+
+        // Inicializa os dados ao carregar
+        atualizarTudo();
+    </script>
+</body>
+</html>

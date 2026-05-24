@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jhenyffer Beauty - Cílios de Luxo, Sobrancelhas e Unhas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* Reset e Configurações Globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --primary-pink: #ffb7c5;
+            --light-pink: #fff0f3;
+            --dark-pink: #d47a8c;
+            --text-dark: #2c2c2c;
+            --text-muted: #666666;
+            --pure-white: #ffffff;
+            --purple-btn: #5e35b1;
+            --purple-btn-hover: #4527a0;
+            --whatsapp-green: #25d366;
+        }
+
+        body {
+            background-color: var(--light-pink);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Cabeçalho / Menu de Navegação */
+        header {
+            background-color: var(--pure-white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--dark-pink);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--dark-pink);
+        }
+
+        /* Seção Hero (Apresentação Principal Escura baseada na Imagem) */
+        .hero {
+            margin-top: 80px;
+            background: linear-gradient(135deg, #1c1c1c 0%, #3a3a3a 100%);
+            color: var(--pure-white);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            margin-bottom: 35px;
+            color: #e0e0e0;
+            font-weight: 300;
+        }
+
+        .btn-agendar {
+            display: inline-block;
+            background-color: var(--purple-btn);
+            color: var(--pure-white);
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(94, 53, 177, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-agendar:hover {
+            background-color: var(--purple-btn-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(94, 53, 177, 0.6);
+        }
+
+        .hero-images {
+            flex: 1;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            position: relative;
+        }
+
+        .hero-img-box {
+            width: 140px;
+            height: 220px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .hero-img-box:hover {
+            transform: scale(1.05);
+        }
+
+        .hero-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Seção de
+        <html>
+        
